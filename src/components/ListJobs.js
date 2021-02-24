@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {connect} from 'react-redux'
 import {startGetjob,startUpdateJob,startRemoveJob} from '../actions/jobAction'
-import { Collapse, Modal ,DatePicker ,Button} from 'antd';
+import { Collapse, Modal ,DatePicker ,Button ,Pagination } from 'antd';
 
 const { Panel } = Collapse;
 
@@ -15,7 +15,9 @@ class ListJobs extends Component {
             date : '',
             visible : false ,
             bool : false,
-            search : ''
+            search : '',
+            pagesize : 5,
+            pagenumber : 1
         }
     }
     componentDidMount(){
@@ -52,7 +54,7 @@ class ListJobs extends Component {
     onChange = (date, dateString) => {
        this.setState({date : dateString})
       }
-      handleSubmit = (id ,e) =>{
+    handleSubmit = (id ,e) =>{
         e.preventDefault()
         console.log(id);
         const obj = {
@@ -60,7 +62,7 @@ class ListJobs extends Component {
             description : this.state.description,
             date : this.state.date
         }
-        console.log(obj);
+        //console.log(obj);
         if(obj.job_id && obj.description && obj.date){
             this.setState({visible:false})
             this.props.dispatch(startUpdateJob(id ,obj))
@@ -82,7 +84,19 @@ class ListJobs extends Component {
             return this.props.job
         }
     }
+    handleChangePage = (action ,e) => {
+        if(action === 'inc'){
+            this.setState((prevState) => ({
+                pagenumber: prevState.pagenumber + 1
+              }));
+        }
+        else if(action === 'dec'){
+            this.setState((prevState) => ({
+                pagenumber: prevState.pagenumber - 1
+              }));
+        }
 
+      }
     render() {
         return (
             <div align='center'>
@@ -93,10 +107,14 @@ class ListJobs extends Component {
                     value={this.state.search}
                     onChange={this.handleChange}
                 /><br/>
-                <h2>No. of Jobs - {this.props.job.length}</h2><br/>
+                <h2>No. of Jobs - {this.props.job.length} </h2> <br/>
                 <Collapse defaultActiveKey={['1']} onChange={this.callback} style={{width : '500px'}} >
                     {
-                        (this.filter()).map(ele => {
+                        (this.filter())
+                        .slice(
+                                (this.state.pagenumber - 1 ) * this.state.pagesize , 
+                                this.state.pagenumber * this.state.pagesize
+                            ).map(ele => {
                             return (
                                 <>
                                 <Panel header={ele.job_id} key={ele._id} >
@@ -152,6 +170,20 @@ class ListJobs extends Component {
                     }
 
                 </Collapse>
+                <h2>Current page = {this.state.pagenumber}</h2>
+                <Button 
+                    disabled={this.state.pagenumber <= 1} 
+                    onClick={(e)=>{this.handleChangePage('dec',e)}}
+                    type="primary"
+                >
+                    Prev
+                </Button>
+                <Button 
+                    disabled={this.state.pagenumber >= Math.ceil(this.props.job.length / this.state.pagesize)} onClick={(e)=>{this.handleChangePage('inc',e)}}
+                    type="primary"
+                    >
+                    next
+                </Button>
             </div>
         )
     }
