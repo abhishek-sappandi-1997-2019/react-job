@@ -15,7 +15,7 @@ export const remove = (id) =>{
 
 export const startGetjob = () =>{
     return (dispatch) =>{
-        axios.get(`http://localhost:3029/job/`)
+        axios.get(`https://node-havi-jobs.herokuapp.com/job/`)
         .then((response)=>{
             const job = response.data
             console.log(job);
@@ -30,7 +30,7 @@ export const startGetjob = () =>{
 }
 export const startAddJob = (obj)=>{
     return (dispatch) =>{
-        axios.post(`http://localhost:3029/job`,obj)
+        axios.post(`https://node-havi-jobs.herokuapp.com/job`,obj)
         .then((response)=>{
             const job = response.data
             console.log(job);
@@ -45,7 +45,7 @@ export const startAddJob = (obj)=>{
 }
 export const startUpdateJob = (_id,obj) =>{
     return (dispatch)=>{
-        axios.put(`http://localhost:3029/job/${_id}`,obj)
+        axios.put(`https://node-havi-jobs.herokuapp.com/job/${_id}`,obj)
         .then((response)=>{
             const job = response.data
             if(!job.errors){
@@ -59,7 +59,7 @@ export const startUpdateJob = (_id,obj) =>{
 }
 export const startRemoveJob = (id) =>{
     return (dispatch)=>{
-        axios.delete(`http://localhost:3029/job/${id}`)
+        axios.delete(`https://node-havi-jobs.herokuapp.com/job/${id}`)
         .then((response)=>{
             const job = response.data
             if(!job.errors){
