@@ -14,7 +14,8 @@ class ListJobs extends Component {
             description : '',
             date : '',
             visible : false ,
-            bool : false
+            bool : false,
+            search : ''
         }
     }
     componentDidMount(){
@@ -23,7 +24,11 @@ class ListJobs extends Component {
         }
     }
     handleDelete = (id) => {
-        this.props.dispatch(startRemoveJob(id))
+        const validate = window.confirm("Are You Sure ....?")
+        if(validate){
+            this.props.dispatch(startRemoveJob(id))
+        }
+        
     }
     callback =(key) =>{
         //console.log(key);
@@ -65,13 +70,33 @@ class ListJobs extends Component {
             this.setState({bool : true})
         }
     }
+
+    filter = () => {
+        if(this.state.search.length > 0){
+            return this.props.job.filter(ele => 
+                                    ele.job_id.includes(this.state.search) || 
+                                    ele.description.includes(this.state.search) 
+                                    )
+        }
+        else {
+            return this.props.job
+        }
+    }
+
     render() {
         return (
             <div align='center'>
+                <input
+                    type='text'
+                    name='search'
+                    placeholder='search title / description'
+                    value={this.state.search}
+                    onChange={this.handleChange}
+                /><br/>
                 <h2>No. of Jobs - {this.props.job.length}</h2><br/>
                 <Collapse defaultActiveKey={['1']} onChange={this.callback} style={{width : '500px'}} >
                     {
-                        this.props.job.map(ele => {
+                        (this.filter()).map(ele => {
                             return (
                                 <>
                                 <Panel header={ele.job_id} key={ele._id} >
